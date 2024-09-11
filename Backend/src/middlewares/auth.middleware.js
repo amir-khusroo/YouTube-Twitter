@@ -22,7 +22,8 @@ const verifyJWT=asyncHandler(async(req,res,next)=>{
         req.user=user
         next()
     } catch (error) {
-        throw new apiError(401,"Invalid Access Token")
+        //throw new apiError(401,"Invalid Access Token")
+        res.status(401).json({msg:"You are not logged in"});
     }
 
 })
