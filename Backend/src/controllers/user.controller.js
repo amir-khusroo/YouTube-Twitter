@@ -97,20 +97,21 @@ const loginUser=asyncHandler(async (req,res)=>{
     //send cookies to user
 
     try {
-        const {username,email,password}=req.body
-        if(!username && !email){
-            throw new apiError(400,"usename or email required")
+        const {email,password}=req.body
+        if(!email){
+            return res.status(400).json(new ApiResponse(400,{},"email is required"));
         }
         const user=await User.findOne({
-            $or: [{username},{email}]
+            // $or: [{username},{email}]
+            email
         })
         if(!user){
-            throw new apiError(404,"user does not exist")
+            return res.status(404).json(new ApiResponse(404,{},"user does not exist"));
         }
         const isPasswordValid=await user.isPasswordCorrect(password)
     
         if(!isPasswordValid){
-            throw new apiError(401,"Password incorrect")
+            return res.status(404).json(new ApiResponse(404,{},"Password incorrect"));
         }
     
         const {accessToken,refreshToken}=await generateRefreshAndAccessTocken(user._id)
@@ -137,7 +138,7 @@ const loginUser=asyncHandler(async (req,res)=>{
             )
         )
     } catch (error) {
-        res.status(401).json({msg:"error"});
+        res.status(401).json({msg:"some other error"});
     }
 
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link ,useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
+import { toast } from 'react-toastify';
 
 const LoginLogout = ({ authToken, setAuthToken }) => {
   const navigate = useNavigate();
@@ -25,12 +26,13 @@ const LoginLogout = ({ authToken, setAuthToken }) => {
         await axios.post('/api/user/logout').then((res)=>{
             localStorage.removeItem('accessToken');
             setAuthToken(null);
-            console.log(res);
+            toast.success(res.data.message)
+            console.log(res.data.message);
         })
 
         navigate('/login');
     } catch (err) {
-        console.error(err.response.data.msg);
+      console.error(err.response.data.msg);
     }
   };
 
@@ -40,7 +42,6 @@ const LoginLogout = ({ authToken, setAuthToken }) => {
           <div className='flex flex-col items-center'>
             <Link
                 onClick={handleLogout}
-                to="/login"
                 className="text-gray-800 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none border border-blue-800"
             >
                 Logout

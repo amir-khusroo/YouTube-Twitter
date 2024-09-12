@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios"
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 const Login = ({ authToken, setAuthToken }) => {
@@ -15,23 +15,19 @@ const Login = ({ authToken, setAuthToken }) => {
             return { ...currData, [event.target.name]: event.target.value }
         })
     }
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const handleSubmit = (e) => {
-        try {
-            e.preventDefault();
-            axios.post("/api/user/login", formData).then((resp)=>{
-                console.log(resp.data.data)
-                localStorage.setItem('accessToken', resp.data.data.accessToken);
-                setAuthToken(resp.data.data.accessToken);
-            })
+        e.preventDefault();
+        axios.post("/api/user/login", formData).then((resp) => {
+            console.log(resp.data.message)
+            toast.success(resp.data.message)
+            localStorage.setItem('accessToken', resp.data.data.accessToken);
+            setAuthToken(resp.data.data.accessToken);
             navigate('/post');
-        }
-        catch (err) {
-            if(err & err.status==401){
-                console.log("Unauthorized")
-            }
-            console.log(err)
-        }
+        }).catch((err) => {
+            toast.error(err.response.data.message)
+            console.log(err.response.data.message)
+        })
         setFormData({
             email: "",
             password: "",
@@ -84,12 +80,12 @@ const Login = ({ authToken, setAuthToken }) => {
                         </button>
                     </div>
                     <div className="mt-6 text-center text-2xl">
-                        <a
-                            href="#"
+                        <Link
+                            to="/registration"
                             className="text-indigo-600 hover:underline text-sm"
                         >
                             New User registration
-                        </a>
+                        </Link>
                     </div>
                 </form>
             </div>
