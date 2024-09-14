@@ -8,6 +8,7 @@ import Login from './components/Login.jsx';
 import RegistrationForm from './components/RegistrationForm.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Profile from './components/Profile.jsx';
 
 function App() {
   const [authToken, setAuthToken] = useState(null);
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/post' element={<Post />} />
+        <Route path='/profile' element={<Profile authToken={authToken}/>} />
         <Route path='/login' element={<Login authToken={authToken} setAuthToken={setAuthToken} />} />
         <Route path='/registration' element={<RegistrationForm />} />
       </Routes>

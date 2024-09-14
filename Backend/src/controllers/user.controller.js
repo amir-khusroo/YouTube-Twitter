@@ -3,7 +3,7 @@ import { apiError } from "../utils/apiError.js"
 import { User } from "../models/user.model.js"
 import uploadOnCloudinary from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/apiResponse.js"
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken" 
 
 const generateRefreshAndAccessTocken=async(userId)=>{
     try {
@@ -40,14 +40,14 @@ const registerUser=asyncHandler(async(req,res)=>{
     if([fullname,username, email,password].some((field)=>
         field?.trim()===""
     )){
-        throw new apiError(400,"All field are required")
+        return res.status(400).json(new ApiResponse(400,{},"All field are required"));
     }
 
     const existedUser=await User.findOne({
         $or:[{username},{email}]
     })
     if(existedUser){
-        throw new apiError(409,"username or password alraedy exisxt")
+        return res.status(409).json(new ApiResponse(409,{},"username or password alraedy exisxt"));
     }
     const avatarLocalPath=req.files?.avatar[0]?.path
     // const coverImageLocalPath=req.files?.coverImage[0]?.path
@@ -57,14 +57,14 @@ const registerUser=asyncHandler(async(req,res)=>{
     }
 
     if(!avatarLocalPath){
-        throw new apiError(400,"avatar is required")
+        return res.status(400).json(new ApiResponse(400,{},"avatar is required"));
     }
 
     const avatar=await uploadOnCloudinary(avatarLocalPath)
     const coverImage=await uploadOnCloudinary(coverImageLocalPath)
     
     if(!avatar){
-        throw new apiError(400,"")
+        return res.status(400).json(new ApiResponse(400,{},"avatar uploading error"));
     }
     
     const user=await User.create({

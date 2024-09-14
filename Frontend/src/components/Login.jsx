@@ -23,6 +23,7 @@ const Login = ({ authToken, setAuthToken }) => {
             toast.success(resp.data.message)
             localStorage.setItem('accessToken', resp.data.data.accessToken);
             setAuthToken(resp.data.data.accessToken);
+            console.log(authToken)
             navigate('/post');
         }).catch((err) => {
             toast.error(err.response.data.message)

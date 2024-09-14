@@ -1,5 +1,9 @@
 // RegistrationForm.jsx
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import axios from "axios"
+import { useNavigate} from 'react-router-dom';
+
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +32,7 @@ const RegistrationForm = () => {
       ...formData,
       avatar: file,
     });
-    
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarPreview(reader.result);
@@ -37,20 +41,45 @@ const RegistrationForm = () => {
   };
 
   // Handle form submission
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
     // Implement form submission logic (e.g., call an API)
+    const data = new FormData();
+    data.append('fullname', formData.fullname);
+    data.append('username', formData.username);
+    data.append('email', formData.email);
+    data.append('password', formData.password);
+    if (formData.avatar) {
+      data.append('avatar', formData.avatar);
+    }
+
+    axios.post("/api/user/register", data).then((resp) => {
+      console.log(resp.data.message)
+      toast.success(resp.data.message)
+      navigate('/login');
+    }).catch((err) => {
+      toast.error(err.response.data.message)
+      console.log(err.response.data.message)
+    })
+    setFormData({
+      fullname: '',
+      username: '',
+      email: '',
+      password: '',
+      avatar: null,
+    })
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form 
+      <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        
+
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2" htmlFor="fullname">
             Full Name
@@ -92,7 +121,7 @@ const RegistrationForm = () => {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
+            onChange={handleChange} 
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
             placeholder="Enter your email"
             required
@@ -122,6 +151,7 @@ const RegistrationForm = () => {
           <input
             type="file"
             id="avatar"
+            required
             accept="image/*"
             onChange={handleAvatarChange}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
